@@ -31,7 +31,7 @@ public class Grid {
       // clearScreen();
       drawMap();
       try {
-        Thread.sleep(1000);
+        Thread.sleep(500);
       } catch (Exception e) {
       }
     }
@@ -50,25 +50,15 @@ public class Grid {
     // Early termination
     if (direction.isPresent()) {
       Vec2 dir = direction.get();
-      if (!isCellValid(currPos.add(dir))) {
-        if (dir.equals(Vec2.X) || dir.equals(Vec2.negX)) {
-          if (isCellValid(currPos.add(Vec2.Y)) && isCellValid(currPos.add(Vec2.negY))) {
-            setGridData(currPos, false);
-            return 0;
-          }
-        } else if (dir.equals(Vec2.Y) || dir.equals(Vec2.negY)) {
-          if (isCellValid(currPos.add(Vec2.X)) && isCellValid(currPos.add(Vec2.negX))) {
-            setGridData(currPos, false);
-            return 0;
-          }
-        }
+      if (!checkCorner(currPos, dir)) {
+        setGridData(currPos, false);
+        return 0;
       }
     }
-    ;
 
     int pathSum = 0;
     // Explore all 4 ways
-    for (Vec2 neighborPath : new Vec2[] { Vec2.X, Vec2.Y, Vec2.negX, Vec2.negY }) {
+    for (Vec2 neighborPath : new Vec2[] { Vec2.RIGHT, Vec2.TOP, Vec2.LEFT, Vec2.BOT }) {
       // Get r,t,l,b Cell
       currPos.selfAdd(neighborPath);
       if (isCellValid(currPos)) {
@@ -80,6 +70,70 @@ public class Grid {
     setGridData(currPos, false);
 
     return pathSum;
+  }
+
+  private boolean checkCorner(Vec2 pos, Vec2 dir) {
+    Vec2[] dir_offsets = new Vec2[] {
+        Vec2.TOP,
+        Vec2.TOP_RIGHT,
+        Vec2.RIGHT,
+        Vec2.BOT_RIGHT,
+        Vec2.BOT,
+        Vec2.BOT_LEFT,
+        Vec2.LEFT,
+        Vec2.TOP_LEFT
+    };
+
+    int dir_idx = 0;
+    if (dir.equals(Vec2.RIGHT)) {
+      dir_idx = 2;
+    } else if (dir.equals(Vec2.BOT)) {
+      dir_idx = 4;
+    } else if (dir.equals(Vec2.LEFT)) {
+      dir_idx = 6;
+    }
+
+    Vec2 cellCornerLeft = pos.add(arrayGet(dir_offsets, dir_idx - 1));
+    Vec2 cellAhead = pos.add(arrayGet(dir_offsets, dir_idx));
+    Vec2 cellCornerRight = pos.add(arrayGet(dir_offsets, dir_idx + 1));
+
+    // Case is only possible because destination point is in the edge of the map
+    if (cellCornerLeft.equals(desPos) || cellCornerRight.equals(desPos)) {
+      return false;
+    }
+
+    // If Cell ahead is blocked, check if the path to the right and left is passable or not
+    if (!isCellValid(cellAhead)) {
+      if (isCellValid(pos.add(arrayGet(dir_offsets, dir_idx - 2))) &&
+          isCellValid(pos.add(arrayGet(dir_offsets, dir_idx + 2)))) {
+        return false;
+      }
+    // If Cell on the corner left is blocked, check if the path to the left and ahead is passable or not
+    } else if (!isCellValid(cellCornerLeft)) {
+      if (isCellValid(pos.add(arrayGet(dir_offsets, dir_idx - 2))) &&
+          isCellValid(pos.add(arrayGet(dir_offsets, dir_idx)))) {
+        return false;
+      }
+    // If Cell on the corner right is blocked, check if the path to the right and ahead is passable or not
+    } else if (!isCellValid(cellCornerRight)) {
+      if (isCellValid(pos.add(arrayGet(dir_offsets, dir_idx))) &&
+          isCellValid(pos.add(arrayGet(dir_offsets, dir_idx + 2)))) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  // Get data in provided array, however if index is larger or smaller than
+  // array's length, circulate it around.
+  private <T> T arrayGet(T[] objArr, int idx) {
+    if (idx >= objArr.length || idx < 0) {
+      int i = Math.floorMod(idx, objArr.length);
+      return objArr[i];
+    } else {
+      return objArr[idx];
+    }
   }
 
   private boolean isCellValid(Vec2 pos) {

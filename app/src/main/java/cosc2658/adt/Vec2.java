@@ -4,10 +4,17 @@ public class Vec2 implements Cloneable {
   public int x;
   public int y;
 
-  public static Vec2 X = new Vec2(1, 0);
-  public static Vec2 Y = new Vec2(0, 1);
-  public static Vec2 negX = new Vec2(-1, 0);
-  public static Vec2 negY = new Vec2(0, -1);
+  public static final Vec2 ZERO = new Vec2(0, 0);
+
+  public static final Vec2 RIGHT = new Vec2(1, 0);
+  public static final Vec2 TOP = new Vec2(0, 1);
+  public static final Vec2 LEFT = new Vec2(-1, 0);
+  public static final Vec2 BOT = new Vec2(0, -1);
+
+  public static final Vec2 TOP_LEFT = new Vec2(-1, 1);
+  public static final Vec2 TOP_RIGHT = new Vec2(1, 1);
+  public static final Vec2 BOT_RIGHT = new Vec2(1, -1);
+  public static final Vec2 BOT_LEFT = new Vec2(-1, -1);
 
   public Vec2(int x, int y) {
     this.x = x;
