@@ -13,6 +13,7 @@ public class App {
   private static int SSOLUTION_4 = 8;
   private static int SSOLUTION_5 = 86;
   private static int SSOLUTION_6 = 1770;
+  private static int SSOLUTION_8 = 8943966;
 
   public static void main(String[] args) {
     // Grid grid = new Grid(new Vec2(8, 8), new Vec2(0, 7), new Vec2(0, 0));
