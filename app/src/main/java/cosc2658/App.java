@@ -3,17 +3,38 @@
  */
 package cosc2658;
 
+import java.util.concurrent.TimeUnit;
+
 import cosc2658.adt.Vec2;
 
 public class App {
+
+  private static int SSOLUTION_3 = 2;
+  private static int SSOLUTION_4 = 8;
+  private static int SSOLUTION_5 = 86;
+  private static int SSOLUTION_6 = 1770;
+
   public static void main(String[] args) {
-    Grid grid = new Grid(new Vec2(8, 8), new Vec2(0, 7), new Vec2(0, 0));
+    // Grid grid = new Grid(new Vec2(8, 8), new Vec2(0, 7), new Vec2(0, 0));
+    Grid grid = new Grid(Vec2.splat(8));
 
     // grid.setGridData(new Vec2(0, 0), true);
     // grid.drawMap();
 
+    long startTime = System.currentTimeMillis();
+
     // int allPaths = grid.useDebug().findAllPaths();
     int allPaths = grid.findAllPaths();
+
+    long endTime = System.currentTimeMillis();
+
     System.out.println("Total paths: " + allPaths);
+    System.out.println("Execution time: " + formatTime(endTime - startTime));
+  }
+
+  private static String formatTime(long durationMs) {
+    // if (durationMs > 1000)
+    // return String.valueOf(TimeUnit.MILLISECONDS.toSeconds(durationMs)) + "s";
+    return String.valueOf(durationMs) + "ms";
   }
 }

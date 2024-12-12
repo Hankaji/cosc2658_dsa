@@ -16,6 +16,10 @@ public class Vec2 implements Cloneable {
   public static final Vec2 BOT_RIGHT = new Vec2(1, -1);
   public static final Vec2 BOT_LEFT = new Vec2(-1, -1);
 
+  public static Vec2 splat(int v) {
+    return new Vec2(v, v);
+  }
+
   public Vec2(int x, int y) {
     this.x = x;
     this.y = y;
@@ -50,6 +54,10 @@ public class Vec2 implements Cloneable {
 
   public Vec2 subtract(Vec2 other) {
     return new Vec2(x - other.x, y - other.y);
+  }
+
+  public Vec2 mul(int v) {
+    return new Vec2(x * v, y * v);
   }
 
   @Override

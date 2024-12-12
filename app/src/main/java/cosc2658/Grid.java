@@ -2,6 +2,7 @@ package cosc2658;
 
 import java.util.Optional;
 
+import cosc2658.adt.ArrayList;
 import cosc2658.adt.Vec2;
 
 public class Grid {
@@ -14,8 +15,20 @@ public class Grid {
 
   private boolean debugMode = false;
 
-  public static void main(String[] args) {
+  public Grid(Vec2 size, Vec2 startPos, Vec2 desPos) {
+    this.size = size;
+    this.gridData = new int[size.x * size.y];
+    this.startPos = startPos;
+    this.desPos = desPos;
+    this.instruction = "*".repeat(size.x * size.y);
+  }
 
+  public Grid(Vec2 size) {
+    this.size = size;
+    this.gridData = new int[size.x * size.y];
+    this.startPos = new Vec2(0, size.y - 1);
+    this.desPos = Vec2.ZERO;
+    this.instruction = "*".repeat(size.x * size.y);
   }
 
   public int findAllPaths() {
@@ -31,7 +44,7 @@ public class Grid {
       // clearScreen();
       drawMap();
       try {
-        Thread.sleep(500);
+        Thread.sleep(900);
       } catch (Exception e) {
       }
     }
@@ -57,14 +70,16 @@ public class Grid {
     }
 
     int pathSum = 0;
-    // Explore all 4 ways
-    for (Vec2 neighborPath : new Vec2[] { Vec2.RIGHT, Vec2.TOP, Vec2.LEFT, Vec2.BOT }) {
+    // Explore the neighbors cells
+    ArrayList<Vec2> neighborCells = findNeighbors(currPos, steps);
+    // Vec2[] testCells = new Vec2[] { Vec2.RIGHT, Vec2.TOP, Vec2.LEFT, Vec2.BOT };
+    for (Vec2 neighborCell : neighborCells) {
       // Get r,t,l,b Cell
-      currPos.selfAdd(neighborPath);
+      currPos.selfAdd(neighborCell);
       if (isCellValid(currPos)) {
-        pathSum += findAllPathsHelper(steps + 1, Optional.of(neighborPath));
+        pathSum += findAllPathsHelper(steps + 1, Optional.of(neighborCell));
       }
-      currPos.selfSubtract(neighborPath);
+      currPos.selfSubtract(neighborCell);
     }
 
     setGridData(currPos, false);
@@ -102,19 +117,22 @@ public class Grid {
       return false;
     }
 
-    // If Cell ahead is blocked, check if the path to the right and left is passable or not
+    // If Cell ahead is blocked, check if the path to the right and left is passable
+    // or not
     if (!isCellValid(cellAhead)) {
       if (isCellValid(pos.add(arrayGet(dir_offsets, dir_idx - 2))) &&
           isCellValid(pos.add(arrayGet(dir_offsets, dir_idx + 2)))) {
         return false;
       }
-    // If Cell on the corner left is blocked, check if the path to the left and ahead is passable or not
+      // If Cell on the corner left is blocked, check if the path to the left and
+      // ahead is passable or not
     } else if (!isCellValid(cellCornerLeft)) {
       if (isCellValid(pos.add(arrayGet(dir_offsets, dir_idx - 2))) &&
           isCellValid(pos.add(arrayGet(dir_offsets, dir_idx)))) {
         return false;
       }
-    // If Cell on the corner right is blocked, check if the path to the right and ahead is passable or not
+      // If Cell on the corner right is blocked, check if the path to the right and
+      // ahead is passable or not
     } else if (!isCellValid(cellCornerRight)) {
       if (isCellValid(pos.add(arrayGet(dir_offsets, dir_idx))) &&
           isCellValid(pos.add(arrayGet(dir_offsets, dir_idx + 2)))) {
@@ -123,6 +141,53 @@ public class Grid {
     }
 
     return true;
+  }
+
+  private ArrayList<Vec2> findNeighbors(Vec2 currPos, int stepNth) {
+
+    switch (instruction.charAt(stepNth)) {
+      case '*':
+        ArrayList<Vec2> directionToCheck = new ArrayList<>();
+        ArrayList<Vec2> priotizedDirections = new ArrayList<>();
+
+        for (Vec2 neighborCell : new Vec2[] { Vec2.RIGHT, Vec2.TOP, Vec2.LEFT,
+            Vec2.BOT }) {
+          // If the neighbor cell is valid, add them to to-be-traversed tiles
+          if (isCellValid(currPos.add(neighborCell))) {
+            directionToCheck.push(neighborCell);
+
+            if (currPos.add(neighborCell).equals(desPos))
+              continue;
+            // If the further cell is invalid, add them to high priority to-be-traversed
+            // tiles
+            if (!isCellValid(currPos.add(neighborCell.mul(2)))) {
+              Vec2 rotatedRight = new Vec2(-neighborCell.y, neighborCell.x);
+
+              Vec2 cellRight = currPos.add(neighborCell).add(rotatedRight);
+              Vec2 cellLeft = currPos.add(neighborCell).subtract(rotatedRight);
+              if (!isCellValid(cellRight) || !isCellValid(cellLeft))
+                priotizedDirections.push(neighborCell);
+
+            }
+
+          }
+
+        }
+
+        if (debugMode) {
+          System.out.println("To check: " + directionToCheck);
+          System.out.println("High priority: " + priotizedDirections);
+        }
+
+        // return directionToCheck;
+        return !priotizedDirections.isEmpty() ? priotizedDirections : directionToCheck;
+      // case 'D':
+      // break;
+
+      default:
+        return new ArrayList<>();
+    }
+
   }
 
   // Get data in provided array, however if index is larger or smaller than
@@ -152,14 +217,6 @@ public class Grid {
     return this;
   }
 
-  public Grid(Vec2 size, Vec2 startPos, Vec2 desPos) {
-    this.size = size;
-    this.gridData = new int[size.x * size.y];
-    this.startPos = startPos;
-    this.desPos = desPos;
-    this.instruction = "*".repeat(size.x * size.y);
-  }
-
   private int to1d(Vec2 idx2d) {
     return idx2d.x + idx2d.y * this.size.x;
   }
@@ -168,8 +225,19 @@ public class Grid {
     return this.gridData[to1d(pos)];
   }
 
-  public void setInstruction(String instruction) {
-    // TODO:
+  public void setInstruction(String instruction) throws Exception {
+    final char[] validDirections = new char[] { '*', 'U', 'R', 'D', 'L' };
+    instruction = instruction.toUpperCase();
+
+    for (char dir : instruction.toCharArray()) {
+      for (char validDir : validDirections) {
+        if (dir != validDir) {
+          throw new Exception(String.format("Invalid direction in instruction: %c", dir));
+        }
+      }
+    }
+
+    this.instruction = instruction;
   }
 
   public void setGridData(Vec2 pos, boolean visited) {
