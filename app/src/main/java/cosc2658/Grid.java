@@ -71,7 +71,7 @@ public class Grid {
 
     int pathSum = 0;
     // Explore the neighbors cells
-    ArrayList<Vec2> neighborCells = findNeighbors(currPos, steps);
+    ArrayList<Vec2> neighborCells = findNeighbors(currPos, steps, direction);
     // Vec2[] testCells = new Vec2[] { Vec2.RIGHT, Vec2.TOP, Vec2.LEFT, Vec2.BOT };
     for (Vec2 neighborCell : neighborCells) {
       // Get r,t,l,b Cell
@@ -143,12 +143,12 @@ public class Grid {
     return true;
   }
 
-  private ArrayList<Vec2> findNeighbors(Vec2 currPos, int stepNth) {
+  private ArrayList<Vec2> findNeighbors(Vec2 currPos, int stepNth, Optional<Vec2> optDir) {
 
     switch (instruction.charAt(stepNth)) {
       case '*':
-        ArrayList<Vec2> directionToCheck = new ArrayList<>();
-        ArrayList<Vec2> priotizedDirections = new ArrayList<>();
+        ArrayList<Vec2> directionToCheck = new ArrayList<>(4);
+        ArrayList<Vec2> priotizedDirections = new ArrayList<>(1);
 
         for (Vec2 neighborCell : new Vec2[] { Vec2.RIGHT, Vec2.TOP, Vec2.LEFT,
             Vec2.BOT }) {
@@ -165,8 +165,10 @@ public class Grid {
 
               Vec2 cellRight = currPos.add(neighborCell).add(rotatedRight);
               Vec2 cellLeft = currPos.add(neighborCell).subtract(rotatedRight);
-              if (!isCellValid(cellRight) || !isCellValid(cellLeft))
+              if (!isCellValid(cellRight) || !isCellValid(cellLeft)) {
                 priotizedDirections.push(neighborCell);
+                break;
+              }
 
             }
 

@@ -6,13 +6,18 @@ import java.util.NoSuchElementException;
 // Array-based implementation of stack
 public class ArrayList<T> implements Iterable<T> {
   private int size;
-  private static int MAX_SIZE = 100;
+  private int MAX_SIZE = 10;
   private T[] items;
 
   @SuppressWarnings("unchecked")
-  public ArrayList() {
+  public ArrayList(int capacity) {
+    MAX_SIZE = capacity;
     size = 0;
     items = (T[]) new Object[MAX_SIZE];
+  }
+
+  public ArrayList() {
+    this(10);
   }
 
   public int size() {

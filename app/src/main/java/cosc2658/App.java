@@ -19,15 +19,16 @@ public class App {
     // Grid grid = new Grid(new Vec2(8, 8), new Vec2(0, 7), new Vec2(0, 0));
     Grid grid = new Grid(Vec2.splat(8));
 
-    // grid.setGridData(new Vec2(0, 0), true);
-    // grid.drawMap();
+    // grid.useDebug();
 
+    long startMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
     long startTime = System.currentTimeMillis();
 
-    // int allPaths = grid.useDebug().findAllPaths();
     int allPaths = grid.findAllPaths();
 
     long endTime = System.currentTimeMillis();
+    long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+    System.out.println("Memory Used: " + (endMemory - startMemory) + " bytes");
 
     System.out.println("Total paths: " + allPaths);
     System.out.println("Execution time: " + formatTime(endTime - startTime));
