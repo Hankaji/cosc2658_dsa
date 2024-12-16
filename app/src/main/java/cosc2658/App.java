@@ -3,39 +3,77 @@
  */
 package cosc2658;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Scanner;
 
 import cosc2658.adt.Vec2;
 
 public class App {
 
-  private static int SSOLUTION_3 = 2;
-  private static int SSOLUTION_4 = 8;
-  private static int SSOLUTION_5 = 86;
-  private static int SSOLUTION_6 = 1770;
-  private static int SSOLUTION_8 = 8943966;
+  // SOLUTION_3 = 2;
+  // SOLUTION_4 = 8;
+  // SOLUTION_5 = 86;
+  // SOLUTION_6 = 1770;
+  // SOLUTION_8 = 8943966;
 
   public static void main(String[] args) {
-    // Grid grid = new Grid(new Vec2(8, 8), new Vec2(0, 7), new Vec2(0, 0));
-    Grid grid = new Grid(Vec2.splat(8));
+    Scanner input = new Scanner(System.in);
 
-    // grid.setGridData(new Vec2(0, 0), true);
-    // grid.drawMap();
+    System.out.println("Welcome to maze traversal algorithm");
+    System.out.println("Type 'quit' to exit program, <Enter> to continue.");
+    while (!input.nextLine().trim().toLowerCase().equals("quit")) {
 
-    long startTime = System.currentTimeMillis();
+      int size;
+      while (true) {
+        try {
+          System.out.print("Enter size of Gridmap (Integer number): ");
+          size = Integer.parseInt(input.nextLine().trim());
+          break;
+        } catch (NumberFormatException e) {
+          System.out.println("Invalid input for x. Please enter a valid number.");
+        }
+      }
+      Grid grid = new Grid(Vec2.splat(size));
 
-    // int allPaths = grid.useDebug().findAllPaths();
-    int allPaths = grid.findAllPaths();
+      String instruction = "";
+      int maxLength = size * size;
+      while (true) {
+        System.out.print("Give direction instruction [*, U, R, D, L] (up to " +
+            maxLength + " characters) - ");
+        System.out.println("Empty/unfilled character will be defaulted to '*'");
+        instruction = input.nextLine();
 
-    long endTime = System.currentTimeMillis();
+        if (instruction.length() <= maxLength) {
+          instruction += "*".repeat(maxLength - instruction.length());
+        } else {
+          System.out.println(
+              "Input exceeds max characters " + instruction.length() + "/" + maxLength + ".Please try again.");
+        }
+        try {
+          grid.setInstruction(instruction);
+          break;
+        } catch (Exception e) {
+          System.out.println(e);
+        }
+      }
 
-    System.out.println("Total paths: " + allPaths);
-    System.out.println("Execution time: " + formatTime(endTime - startTime));
+      System.out.println("Executing...\n");
+      long startTime = System.currentTimeMillis();
+
+      int allPaths = grid.findAllPaths();
+
+      long endTime = System.currentTimeMillis();
+
+      System.out.println("Total paths: " + formatNumber(allPaths));
+      System.out.println("Execution time: " + formatNumber(endTime - startTime) + " ms");
+
+      System.out.println("-".repeat(50));
+      System.out.println("Type 'quit' to exit program, <Enter> to continue.");
+    }
+
+    input.close();
   }
 
-  private static String formatTime(long durationMs) {
-    // if (durationMs > 1000)
-    // return String.valueOf(TimeUnit.MILLISECONDS.toSeconds(durationMs)) + "s";
-    return String.valueOf(durationMs) + "ms";
+  private static String formatNumber(long durationMs) {
+    return String.format("%,d", durationMs);
   }
 }
