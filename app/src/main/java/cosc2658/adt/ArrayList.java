@@ -20,6 +20,13 @@ public class ArrayList<T> implements Iterable<T> {
     this(10);
   }
 
+  public ArrayList(T[] objArray) {
+    this(objArray.length);
+    for (T obj : objArray) {
+      push(obj);
+    }
+  }
+
   public int size() {
     return size;
   }

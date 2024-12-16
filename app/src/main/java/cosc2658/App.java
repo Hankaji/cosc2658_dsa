@@ -3,17 +3,15 @@
  */
 package cosc2658;
 
-import java.util.concurrent.TimeUnit;
-
 import cosc2658.adt.Vec2;
 
 public class App {
 
-  private static int SSOLUTION_3 = 2;
-  private static int SSOLUTION_4 = 8;
-  private static int SSOLUTION_5 = 86;
-  private static int SSOLUTION_6 = 1770;
-  private static int SSOLUTION_8 = 8943966;
+  // SOLUTION_3 = 2;
+  // SOLUTION_4 = 8;
+  // SOLUTION_5 = 86;
+  // SOLUTION_6 = 1770;
+  // SOLUTION_8 = 8943966;
 
   public static void main(String[] args) {
     // Grid grid = new Grid(new Vec2(8, 8), new Vec2(0, 7), new Vec2(0, 0));
@@ -28,8 +26,8 @@ public class App {
 
     long endTime = System.currentTimeMillis();
     long endMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-    System.out.println("Memory Used: " + (endMemory - startMemory) + " bytes");
 
+    System.out.println("Memory Used: " + (endMemory - startMemory) + " bytes");
     System.out.println("Total paths: " + allPaths);
     System.out.println("Execution time: " + formatTime(endTime - startTime));
   }
