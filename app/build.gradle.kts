@@ -35,9 +35,20 @@ java {
 application {
     // Define the main class for the application.
     mainClass = "cosc2658.App"
+
+    // Define the default JVM arguments
+    applicationDefaultJvmArgs = listOf("-Dmode=app")
 }
 
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+tasks.named("run") {
+  if (System.getProperty("mode") == "benchmark") {
+      application.mainClass.set("cosc2658.benchmark.Benchmark")
+  }
+    // doFirst {
+    // }
 }
