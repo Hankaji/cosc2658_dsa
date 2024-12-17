@@ -12,46 +12,36 @@ public class Benchmark {
   private static final int GRID_SIZE = 100;
 
   public static void main(String[] args) {
-      System.out.println("Starting benchmark...");
+    System.out.println("Starting benchmark...");
 
-      // Example benchmark for ArrayList operations
-      benchmarkArrayList();
+    // Example benchmark for ArrayList operations
+    benchmark();
 
-      // Example benchmark for Grid operations
-      benchmarkGrid();
-
-      System.out.println("Benchmark completed.");
+    System.out.println("Benchmark completed.");
   }
 
-  private static void benchmarkArrayList() {
-    ArrayList<Integer> list = new ArrayList<>();
-    long startTime = System.nanoTime();
-
-    // Perform NUM_ITERATIONS operations on the ArrayList
-    for (int i = 0; i < NUM_ITERATIONS; i++) {
-      list.add(i); // Add elements
+  private static void benchmark() {
+    int size = 8;
+    Grid grid = new Grid(Vec2.splat(size));
+    String instruction = "";
+    int maxLength = size * size;
+    if (instruction.length() <= maxLength) {
+      instruction += "*".repeat(maxLength - instruction.length());
+    }
+    try {
+      grid.setInstruction(instruction);
+    } catch (Exception e) {
+      System.out.println(e);
     }
 
-    long endTime = System.nanoTime();
-    System.out.println("ArrayList benchmark completed in: " +
-                       (endTime - startTime) / 1_000_000 + " ms");
+    long startTime = System.currentTimeMillis();
+    int allPaths = grid.findAllPaths();
+    long endTime = System.currentTimeMillis();
+    System.out.println("Total paths: " + formatNumber(allPaths));
+    System.out.println("Execution time: " + formatNumber(endTime - startTime) +
+                       " ms");
   }
-
-  private static void benchmarkGrid() {
-    // Grid grid = new Grid(GRID_SIZE, GRID_SIZE);
-    Grid grid = new Grid(Vec2.splat(GRID_SIZE));
-    Random random = new Random();
-    long startTime = System.nanoTime();
-
-    // Perform operations on the grid
-    for (int i = 0; i < NUM_ITERATIONS; i++) {
-      int x = random.nextInt(GRID_SIZE);
-      int y = random.nextInt(GRID_SIZE);
-      grid.setCell(x, y, i); // Example operation
-    }
-
-    long endTime = System.nanoTime();
-    System.out.println("Grid benchmark completed in: " +
-                       (endTime - startTime) / 1_000_000 + " ms");
+  private static String formatNumber(long durationMs) {
+    return String.format("%,d", durationMs);
   }
 }
