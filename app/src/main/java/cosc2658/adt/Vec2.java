@@ -60,6 +60,18 @@ public class Vec2 implements Cloneable {
     return new Vec2(x * v, y * v);
   }
 
+  public Vec2 rotateLeft() {
+    return new Vec2(-y, x);
+  }
+
+  public Vec2 rotateRight() {
+    return new Vec2(y, -x);
+  }
+
+  public Vec2 flip() {
+    return new Vec2(-y, -x);
+  }
+
   @Override
   public String toString() {
     return "Vec2(" + x + ", " + y + ")";
