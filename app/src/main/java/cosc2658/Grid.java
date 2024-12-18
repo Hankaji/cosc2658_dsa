@@ -1,7 +1,11 @@
 package cosc2658;
 
 import cosc2658.adt.Optional;
+
+import java.util.Scanner;
+
 import cosc2658.adt.ArrayList;
+import cosc2658.adt.LinkedListQueue;
 import cosc2658.adt.Vec2;
 
 public class Grid {
@@ -11,8 +15,11 @@ public class Grid {
   private Vec2 desPos; // Destination position
   private Vec2 currPos; // Curent position
   private String instruction;
+  private Vec2 oneWayPoint;
 
   private boolean debugMode = false;
+
+  private Scanner input = new Scanner(System.in);
 
   public Grid(Vec2 size, Vec2 startPos, Vec2 desPos) {
     this.size = size;
@@ -36,9 +43,11 @@ public class Grid {
     setGridData(currPos, true);
 
     if (debugMode) {
+      System.out.println();
       drawMap();
       try {
-        Thread.sleep(900);
+        // Thread.sleep(800);
+        Thread.sleep(1);
       } catch (Exception e) {
       }
     }
@@ -57,12 +66,21 @@ public class Grid {
     int pathSum = 0;
     // Explore the neighbors cells
     ArrayList<Vec2> neighborCells = findNeighbors(currPos, steps, direction);
+    System.out.println("owp: " + oneWayPoint);
     for (Vec2 neighborCell : neighborCells) {
       currPos.selfAdd(neighborCell);
       // Recursively traverse the gridmap
       pathSum += findAllPathsHelper(steps + 1, Optional.some(neighborCell));
       currPos.selfSubtract(neighborCell);
+      if (currPos.equals(oneWayPoint)) {
+        // System.out.println();
+        // drawMap();
+        // input.nextLine();
+        oneWayPoint = null;
+      }
     }
+    if (currPos.equals(oneWayPoint))
+      oneWayPoint = null;
 
     setGridData(currPos, false);
     return pathSum;
@@ -132,7 +150,18 @@ public class Grid {
           // ignore that route
           if (!caseLeftEdge && !caseAhead && !caseRightEdge)
             directionToCheck.push(neighborDir);
-
+          else if (neighborDir.equals(dir) && oneWayPoint == null)
+            if (isCellValid(currPos.add(dir.rotateLeft())) && isCellValid(currPos.add(dir.rotateRight()))) {
+              System.out.println("Reached 1way");
+              int[] gridClone = gridData.clone();
+              gridClone[to1d(neighborCell)] = 1;
+              oneWayPoint = new Vec2(currPos);
+              if (bucketFill(gridClone, currPos.add(dir.rotateLeft()))) {
+                return new ArrayList<>(new Vec2[] { dir.rotateLeft() });
+              } else {
+                return new ArrayList<>(new Vec2[] { dir.rotateRight() });
+              }
+            }
         }
 
         return directionToCheck;
@@ -158,6 +187,36 @@ public class Grid {
     }
 
     return new ArrayList<>();
+  }
+
+  private boolean bucketFill(int[] gridData, Vec2 initialPos) {
+    LinkedListQueue<Vec2> queue = new LinkedListQueue<>();
+
+    queue.enQueue(initialPos);
+    gridData[to1d(initialPos)] = 1;
+
+    while (!queue.isEmpty()) {
+      Vec2 curr = queue.peekFront();
+      queue.deQqueue();
+
+      if (curr.equals(desPos))
+        return true;
+
+      for (Vec2 neighborDir : new Vec2[] { Vec2.RIGHT, Vec2.TOP, Vec2.LEFT,
+          Vec2.BOT }) {
+        Vec2 neighborCell = curr.add(neighborDir);
+
+        if (neighborCell.x < 0 || neighborCell.x >= size.x || neighborCell.y < 0
+            || neighborCell.y >= size.y)
+          continue;
+        if (gridData[to1d(neighborCell)] == 0) {
+          queue.enQueue(neighborCell);
+          gridData[to1d(neighborCell)] = 1;
+        }
+      }
+    }
+
+    return false;
   }
 
   private boolean isCellValid(Vec2 pos) {
@@ -210,12 +269,15 @@ public class Grid {
         if (new Vec2(x, y).equals(currPos)) {
           System.out.print("c");
           continue;
+        } else if (new Vec2(x, y).equals(desPos)) {
+          System.out.print("e");
+          continue;
         }
+
         System.out.print(this.gridData[to1d(new Vec2(x, y))]);
       }
       System.out.println();
     }
-    System.out.println();
   }
 
   public static void clearScreen() {

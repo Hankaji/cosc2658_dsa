@@ -4,6 +4,7 @@
 package cosc2658;
 
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import cosc2658.adt.Vec2;
 
@@ -16,6 +17,9 @@ public class App {
   // SOLUTION_8 = 8943966;
 
   public static void main(String[] args) {
+    test();
+    if (true)
+      return;
     Scanner input = new Scanner(System.in);
 
     System.out.println("Welcome to maze traversal algorithm");
@@ -75,5 +79,16 @@ public class App {
 
   private static String formatNumber(long durationMs) {
     return String.format("%,d", durationMs);
+  }
+
+  private static void test() {
+    Grid grid = new Grid(Vec2.splat(6));
+    // grid.useDebug();
+
+    final long then = System.nanoTime();
+    int paths = grid.findAllPaths();
+    final long millis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - then);
+    System.out.println("Total paths: " + paths);
+    System.out.println("Execution time (ms): " + millis);
   }
 }

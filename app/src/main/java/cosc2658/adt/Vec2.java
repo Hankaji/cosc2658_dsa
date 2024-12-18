@@ -32,6 +32,8 @@ public class Vec2 implements Cloneable {
 
   @Override
   public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
 
     Vec2 vec2Obj = (Vec2) obj;
 
