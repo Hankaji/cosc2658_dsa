@@ -11,5 +11,5 @@ build
 **/bin
 
 # Ignore benchmark results
-src/main/java/cosc2658/benchmark/benchmark_results.csv
+app/src/main/java/cosc2658/benchmark/benchmark_results.csv
 

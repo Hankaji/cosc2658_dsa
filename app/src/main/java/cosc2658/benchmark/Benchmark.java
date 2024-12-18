@@ -37,8 +37,9 @@ public class Benchmark {
 
         // Benchmark the grid for the current size
         long initializationTime = benchmarkInitialization(size);
-        long memoryUsage = getMemoryUsage();
         double averageCalculationTime = benchmarkCalculationTime(size);
+        Runtime runtime = Runtime.getRuntime();
+        long memoryUsage = getMemoryUsage(runtime);
 
         // Write results to the CSV file
         writer.append(String.format("%d,%d,%d,%.2f\n", size, initializationTime,
@@ -100,8 +101,7 @@ public class Benchmark {
     return result;
   }
 
-  private static long getMemoryUsage() {
-    Runtime runtime = Runtime.getRuntime();
+  private static long getMemoryUsage(Runtime runtime) {
     long result = (runtime.totalMemory() - runtime.freeMemory()) / 1024 /
                   1024; // Convert to MB
     System.out.println("Memory Usage: " + result + "MB");

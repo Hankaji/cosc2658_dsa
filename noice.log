@@ -1,0 +1,20 @@
+{ "msg_showcmd", "sl:1", "tick:1012", false, { { 0, ":" } } }
+{ "cmdline_show", "sl:1", "tick:1013", "mode:c", { { 0, "" } } }
+{ "cmdline_show", "sl:1", "tick:1016", "mode:c", { { 0, "M" } } }
+{ "cmdline_show", "sl:1", "tick:1018", "mode:c", { { 0, "Me" } } }
+{ "cmdline_show", "sl:1", "tick:1020", "mode:c", { { 0, "M" } } }
+{ "cmdline_show", "sl:1", "tick:1022", "mode:c", { { 0, "" } } }
+{ "cmdline_hide", "sl:1", "tick:1024", false, 1 }
+{ "msg_showcmd", "sl:1", "tick:1025", false, { { 0, "~@k" } } }
+{ "msg_showcmd", "sl:1", "tick:1027", false, { { 0, ":" } } }
+{ "cmdline_show", "sl:1", "tick:1028", "mode:c", { { 0, "" } } }
+{ "cmdline_show", "sl:1", "tick:1031", "mode:c", { { 0, "m" } } }
+{ "cmdline_show", "sl:1", "tick:1033", "mode:c", { { 0, "me" } } }
+{ "cmdline_show", "sl:1", "tick:1035", "mode:c", { { 0, "mes" } } }
+{ "cmdline_show", "sl:1", "tick:1037", "mode:c", { { 0, "messages" } } }
+{ "cmdline_hide", "sl:1", "tick:1039", false, 1 }
+{ "msg_showcmd", "sl:1", "tick:1040", false, { { 0, ":" } } }
+{ "cmdline_show", "sl:1", "tick:1041", "mode:c", { { 0, "" } } }
+{ "cmdline_show", "sl:1", "tick:1044", "mode:c", { { 0, "q" } } }
+{ "cmdline_show", "sl:1", "tick:1046", "mode:c", { { 0, "qa" } } }
+{ "cmdline_hide", "sl:1", "tick:1048", false, 1 }
