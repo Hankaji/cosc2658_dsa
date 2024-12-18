@@ -3,9 +3,8 @@
  */
 package cosc2658;
 
-import java.util.Scanner;
-
 import cosc2658.adt.Vec2;
+import java.util.Scanner;
 
 public class App {
 
@@ -29,7 +28,8 @@ public class App {
           size = Integer.parseInt(input.nextLine().trim());
           break;
         } catch (NumberFormatException e) {
-          System.out.println("Invalid input for x. Please enter a valid number.");
+          System.out.println(
+              "Invalid input for x. Please enter a valid number.");
         }
       }
       Grid grid = new Grid(Vec2.splat(size));
@@ -38,15 +38,16 @@ public class App {
       int maxLength = size * size;
       while (true) {
         System.out.print("Give direction instruction [*, U, R, D, L] (up to " +
-            maxLength + " characters) - ");
+                         maxLength + " characters) - ");
         System.out.println("Empty/unfilled character will be defaulted to '*'");
         instruction = input.nextLine();
 
         if (instruction.length() <= maxLength) {
           instruction += "*".repeat(maxLength - instruction.length());
         } else {
-          System.out.println(
-              "Input exceeds max characters " + instruction.length() + "/" + maxLength + ".Please try again.");
+          System.out.println("Input exceeds max characters " +
+                             instruction.length() + "/" + maxLength +
+                             ".Please try again.");
         }
         try {
           grid.setInstruction(instruction);
@@ -64,7 +65,8 @@ public class App {
       long endTime = System.currentTimeMillis();
 
       System.out.println("Total paths: " + formatNumber(allPaths));
-      System.out.println("Execution time: " + formatNumber(endTime - startTime) + " ms");
+      System.out.println(
+          "Execution time: " + formatNumber(endTime - startTime) + " ms");
 
       System.out.println("-".repeat(50));
       System.out.println("Type 'quit' to exit program, <Enter> to continue.");
@@ -73,7 +75,7 @@ public class App {
     input.close();
   }
 
-  private static String formatNumber(long durationMs) {
+  public static String formatNumber(long durationMs) {
     return String.format("%,d", durationMs);
   }
 }
