@@ -26,8 +26,8 @@ public class Benchmark {
                           .toString())
                  .getCanonicalPath())) {
       // Write CSV headers
-      writer.append(
-          "GridSize,InitializationTime,MemoryUsage,AverageCalculationTime\n");
+      writer.append("GridSize,InitializationTime,MemoryUsage,"
+                    + "AverageCalculationTime,IsAllWildcards\n");
 
       // Iterate through the grid sizes
       for (int size : GRID_SIZES) {
@@ -51,8 +51,8 @@ public class Benchmark {
         long memoryUsage = getMemoryUsage(runtime);
 
         // Write results to the CSV file
-        writer.append(String.format("%d,%d,%d,%.2f\n", size, initializationTime,
-                                    memoryUsage, averageCalculationTime));
+        writer.append(String.format("%d,%d,%d,%d,1\n", size, initializationTime,
+                                    memoryUsage, (long)averageCalculationTime));
         writer.flush(); // Ensure the data is written immediately
 
         System.out.println("\n-------------------------------------------------"
@@ -78,7 +78,7 @@ public class Benchmark {
         long fixedMemoryUsage = getMemoryUsage(runtime);
 
         // Write results to the CSV file
-        writer.append(String.format("%d,%d,%d,%.2f\n", size,
+        writer.append(String.format("%d,%d,%d,%.2f,0\n", size,
                                     fixedInitializationTime, fixedMemoryUsage,
                                     fixedAverageCalculationTime));
         writer.flush(); // Ensure the data is written immediately
