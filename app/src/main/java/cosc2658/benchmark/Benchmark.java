@@ -31,19 +31,56 @@ public class Benchmark {
 
       // Iterate through the grid sizes
       for (int size : GRID_SIZES) {
-        System.out.println("-------------------------------------------------"
-                           + "-------------------------");
-        System.out.println("Grid Size: " + size);
+        System.out.println("\n#################################################"
+                           + "#########################\n");
+        System.out.println("Grid Size: " + size + "\n");
+
+        /*
+         * ALL WILDCARDS BENCHMARKING
+         * */
+
+        System.out.println("\tALL WILDCARDS:");
+
+        String instruction = "*".repeat(size * size);
 
         // Benchmark the grid for the current size
-        long initializationTime = benchmarkInitialization(size);
-        double averageCalculationTime = benchmarkCalculationTime(size);
+        long initializationTime = benchmarkInitialization(size, instruction);
+        double averageCalculationTime =
+            benchmarkCalculationTime(size, instruction);
         Runtime runtime = Runtime.getRuntime();
         long memoryUsage = getMemoryUsage(runtime);
 
         // Write results to the CSV file
         writer.append(String.format("%d,%d,%d,%.2f\n", size, initializationTime,
                                     memoryUsage, averageCalculationTime));
+        writer.flush(); // Ensure the data is written immediately
+
+        System.out.println("\n-------------------------------------------------"
+                           + "-------------------------\n");
+        /*
+         * RANDOM INSTRUCTION BENCHMARKING:
+         *-------------------------------------
+         * For random instructions benchmarking while maintaining the same
+         *affect that the fixed directions have on the grid, the number of fixed
+         *characters are default to N with N being the grid size (N x N)
+         * */
+
+        System.out.println("\tFIXED DIRECTIONS INCLUDED:");
+        instruction = Grid.generateRandomInstruction(size);
+        System.out.println("DIRECTIONS: " + instruction);
+
+        // Benchmark the grid for the current size
+        long fixedInitializationTime =
+            benchmarkInitialization(size, instruction);
+        double fixedAverageCalculationTime =
+            benchmarkCalculationTime(size, instruction);
+        Runtime fixedRuntime = Runtime.getRuntime();
+        long fixedMemoryUsage = getMemoryUsage(runtime);
+
+        // Write results to the CSV file
+        writer.append(String.format("%d,%d,%d,%.2f\n", size,
+                                    fixedInitializationTime, fixedMemoryUsage,
+                                    fixedAverageCalculationTime));
         writer.flush(); // Ensure the data is written immediately
       }
 
@@ -56,12 +93,11 @@ public class Benchmark {
     System.out.println("Benchmark completed.");
   }
 
-  private static long benchmarkInitialization(int size) {
+  private static long benchmarkInitialization(int size, String instruction) {
     long startTime = System.currentTimeMillis();
 
     // Initialize the grid and set instruction
     Grid grid = new Grid(Vec2.splat(size));
-    String instruction = "*".repeat(size * size);
 
     try {
       grid.setInstruction(instruction);
@@ -76,9 +112,8 @@ public class Benchmark {
     return result;
   }
 
-  private static double benchmarkCalculationTime(int size) {
+  private static double benchmarkCalculationTime(int size, String instruction) {
     Grid grid = new Grid(Vec2.splat(size));
-    String instruction = "*".repeat(size * size);
 
     try {
       grid.setInstruction(instruction);

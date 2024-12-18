@@ -1,14 +1,15 @@
 package cosc2658;
 
-import cosc2658.adt.Optional;
 import cosc2658.adt.ArrayList;
+import cosc2658.adt.Optional;
 import cosc2658.adt.Vec2;
+import java.util.Random;
 
 public class Grid {
   private Vec2 size;
   private int[] gridData; // Contains 2 types of int. 1 = blocked & 0 = passable
   private Vec2 startPos;
-  private Vec2 desPos; // Destination position
+  private Vec2 desPos;  // Destination position
   private Vec2 currPos; // Curent position
   private String instruction;
 
@@ -22,9 +23,7 @@ public class Grid {
     this.instruction = "*".repeat(size.x * size.y);
   }
 
-  public Grid(Vec2 size) {
-    this(size, new Vec2(0, size.y - 1), Vec2.ZERO);
-  }
+  public Grid(Vec2 size) { this(size, new Vec2(0, size.y - 1), Vec2.ZERO); }
 
   public int findAllPaths() {
     currPos = startPos;
@@ -68,93 +67,99 @@ public class Grid {
     return pathSum;
   }
 
-  private ArrayList<Vec2> findNeighbors(Vec2 currPos, int stepNth, Optional<Vec2> optDir) {
+  private ArrayList<Vec2> findNeighbors(Vec2 currPos, int stepNth,
+                                        Optional<Vec2> optDir) {
 
     switch (instruction.charAt(stepNth)) {
-      case '*':
+    case '*':
 
-        if (optDir.isNone()) {
-          ArrayList<Vec2> directionToCheck = new ArrayList<>(3);
-
-          for (Vec2 neighborCell : new Vec2[] { Vec2.RIGHT, Vec2.TOP, Vec2.LEFT,
-              Vec2.BOT }) {
-            // If the neighbor cell is valid, add them to to-be-traversed tiles
-            if (isCellValid(currPos.add(neighborCell))) {
-              directionToCheck.push(neighborCell);
-            }
-          }
-
-          return directionToCheck;
-        }
-
-        Vec2 dir = optDir.unwrap();
-
+      if (optDir.isNone()) {
         ArrayList<Vec2> directionToCheck = new ArrayList<>(3);
-        ArrayList<Vec2> priotizedDirections = new ArrayList<>(1);
 
-        for (Vec2 neighborDir : new Vec2[] {
-            dir.rotateLeft(),
-            dir,
-            dir.rotateRight(),
-        }) {
-          Vec2 neighborCell = currPos.add(neighborDir);
-          if (!isCellValid(neighborCell))
-            continue;
-
-          boolean cellLeftValid = isCellValid(neighborCell.add(neighborDir.rotateLeft()));
-          boolean cellAheadValid = isCellValid(neighborCell.add(neighborDir));
-          boolean cellRightValid = isCellValid(neighborCell.add(neighborDir.rotateRight()));
-
-          // In case target neighbor cell is the destination point
-          // We ignore it from priotized list since we want it to be the last cell
-          // traversed to
-          if (!neighborCell.equals(desPos)) {
-            // If either of the 2 edges (Excluding the edge to the current cell) are
-            // blocked, traverse that block
-            // Boolean algebra: (A ∧ B) v (B ∧ C) v (A ∧ C)
-            if ((!cellLeftValid && !cellAheadValid) || (!cellAheadValid && !cellRightValid)
-                || (!cellLeftValid && !cellRightValid)) {
-              priotizedDirections.push(neighborDir);
-              return priotizedDirections;
-            }
+        for (Vec2 neighborCell :
+             new Vec2[] {Vec2.RIGHT, Vec2.TOP, Vec2.LEFT, Vec2.BOT}) {
+          // If the neighbor cell is valid, add them to to-be-traversed tiles
+          if (isCellValid(currPos.add(neighborCell))) {
+            directionToCheck.push(neighborCell);
           }
-
-          // Check for cases where it partition grid into 2 regions
-          boolean cellTopLeftValid = isCellValid(neighborCell.add(neighborDir.add(neighborDir.rotateLeft())));
-          boolean cellTopRightValid = isCellValid(neighborCell.add(neighborDir.add(neighborDir.rotateRight())));
-
-          boolean caseLeftEdge = !cellTopLeftValid && cellLeftValid && cellAheadValid;
-          boolean caseAhead = !cellAheadValid && cellLeftValid && cellRightValid;
-          boolean caseRightEdge = !cellTopRightValid && cellAheadValid &&
-              cellRightValid;
-
-          // If either case is true (which partition grid into 2 regions)
-          // ignore that route
-          if (!caseLeftEdge && !caseAhead && !caseRightEdge)
-            directionToCheck.push(neighborDir);
-
         }
 
         return directionToCheck;
-      case 'U':
-        if (!isCellValid(currPos.add(Vec2.TOP)))
-          break;
-        return new ArrayList<>(new Vec2[] { Vec2.TOP });
-      case 'R':
-        if (!isCellValid(currPos.add(Vec2.RIGHT)))
-          break;
-        return new ArrayList<>(new Vec2[] { Vec2.RIGHT });
-      case 'D':
-        if (!isCellValid(currPos.add(Vec2.BOT)))
-          break;
-        return new ArrayList<>(new Vec2[] { Vec2.BOT });
-      case 'L':
-        if (!isCellValid(currPos.add(Vec2.LEFT)))
-          break;
-        return new ArrayList<>(new Vec2[] { Vec2.LEFT });
+      }
 
-      default:
-        throw new RuntimeException("Unrecognizable direction");
+      Vec2 dir = optDir.unwrap();
+
+      ArrayList<Vec2> directionToCheck = new ArrayList<>(3);
+      ArrayList<Vec2> priotizedDirections = new ArrayList<>(1);
+
+      for (Vec2 neighborDir : new Vec2[] {
+               dir.rotateLeft(),
+               dir,
+               dir.rotateRight(),
+           }) {
+        Vec2 neighborCell = currPos.add(neighborDir);
+        if (!isCellValid(neighborCell))
+          continue;
+
+        boolean cellLeftValid =
+            isCellValid(neighborCell.add(neighborDir.rotateLeft()));
+        boolean cellAheadValid = isCellValid(neighborCell.add(neighborDir));
+        boolean cellRightValid =
+            isCellValid(neighborCell.add(neighborDir.rotateRight()));
+
+        // In case target neighbor cell is the destination point
+        // We ignore it from priotized list since we want it to be the last cell
+        // traversed to
+        if (!neighborCell.equals(desPos)) {
+          // If either of the 2 edges (Excluding the edge to the current cell)
+          // are blocked, traverse that block Boolean algebra: (A ∧ B) v (B ∧ C)
+          // v (A ∧ C)
+          if ((!cellLeftValid && !cellAheadValid) ||
+              (!cellAheadValid && !cellRightValid) ||
+              (!cellLeftValid && !cellRightValid)) {
+            priotizedDirections.push(neighborDir);
+            return priotizedDirections;
+          }
+        }
+
+        // Check for cases where it partition grid into 2 regions
+        boolean cellTopLeftValid = isCellValid(
+            neighborCell.add(neighborDir.add(neighborDir.rotateLeft())));
+        boolean cellTopRightValid = isCellValid(
+            neighborCell.add(neighborDir.add(neighborDir.rotateRight())));
+
+        boolean caseLeftEdge =
+            !cellTopLeftValid && cellLeftValid && cellAheadValid;
+        boolean caseAhead = !cellAheadValid && cellLeftValid && cellRightValid;
+        boolean caseRightEdge =
+            !cellTopRightValid && cellAheadValid && cellRightValid;
+
+        // If either case is true (which partition grid into 2 regions)
+        // ignore that route
+        if (!caseLeftEdge && !caseAhead && !caseRightEdge)
+          directionToCheck.push(neighborDir);
+      }
+
+      return directionToCheck;
+    case 'U':
+      if (!isCellValid(currPos.add(Vec2.TOP)))
+        break;
+      return new ArrayList<>(new Vec2[] {Vec2.TOP});
+    case 'R':
+      if (!isCellValid(currPos.add(Vec2.RIGHT)))
+        break;
+      return new ArrayList<>(new Vec2[] {Vec2.RIGHT});
+    case 'D':
+      if (!isCellValid(currPos.add(Vec2.BOT)))
+        break;
+      return new ArrayList<>(new Vec2[] {Vec2.BOT});
+    case 'L':
+      if (!isCellValid(currPos.add(Vec2.LEFT)))
+        break;
+      return new ArrayList<>(new Vec2[] {Vec2.LEFT});
+
+    default:
+      throw new RuntimeException("Unrecognizable direction");
     }
 
     return new ArrayList<>();
@@ -176,25 +181,23 @@ public class Grid {
     return this;
   }
 
-  private int to1d(Vec2 idx2d) {
-    return idx2d.x + idx2d.y * this.size.x;
-  }
+  private int to1d(Vec2 idx2d) { return idx2d.x + idx2d.y * this.size.x; }
 
-  private int getData(Vec2 pos) {
-    return this.gridData[to1d(pos)];
-  }
+  private int getData(Vec2 pos) { return this.gridData[to1d(pos)]; }
 
   public void setInstruction(String instruction) throws Exception {
-    final char[] validDirections = new char[] { '*', 'U', 'R', 'D', 'L' };
+    final char[] validDirections = new char[] {'*', 'U', 'R', 'D', 'L'};
     instruction = instruction.toUpperCase();
 
-    outerloop: for (char dir : instruction.toCharArray()) {
+  outerloop:
+    for (char dir : instruction.toCharArray()) {
       for (char validDir : validDirections) {
         if (dir == validDir) {
           continue outerloop;
         }
       }
-      throw new Exception(String.format("Invalid direction in instruction: %c", dir));
+      throw new Exception(
+          String.format("Invalid direction in instruction: %c", dir));
     }
 
     this.instruction = instruction;
@@ -216,6 +219,35 @@ public class Grid {
       System.out.println();
     }
     System.out.println();
+  }
+
+  public static String generateRandomInstruction(int gridSize) {
+    Random random = new Random();
+    int totalLength = gridSize * gridSize; // Total number of cells in the grid
+    int fixedDirectionsCount = gridSize;   // Number of fixed directions
+    String[] directions = {"U", "D", "L", "R"}; // Possible direction characters
+
+    // Build the instruction with fixed directions
+    StringBuilder instruction = new StringBuilder();
+    for (int i = 0; i < fixedDirectionsCount; i++) {
+      instruction.append(directions[random.nextInt(directions.length)]);
+    }
+
+    // Fill the rest with '*'
+    while (instruction.length() < totalLength) {
+      instruction.append('*');
+    }
+
+    // Shuffle the characters for randomness
+    char[] instructionArray = instruction.toString().toCharArray();
+    for (int i = instructionArray.length - 1; i > 0; i--) {
+      int j = random.nextInt(i + 1);
+      char temp = instructionArray[i];
+      instructionArray[i] = instructionArray[j];
+      instructionArray[j] = temp;
+    }
+
+    return new String(instructionArray);
   }
 
   public static void clearScreen() {
