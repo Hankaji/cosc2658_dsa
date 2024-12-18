@@ -4,33 +4,58 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 // Array-based implementation of stack
-public class ArrayList<T> implements Iterable<T> {
+public class ArrayStack<T> implements Iterable<T> {
   private int size;
   private int MAX_SIZE = 10;
   private T[] items;
 
+  /**
+   * Construct an array stack with a size capacity
+   * 
+   * @param capacity the initial size
+   */
   @SuppressWarnings("unchecked")
-  public ArrayList(int capacity) {
+  public ArrayStack(int capacity) {
     MAX_SIZE = capacity;
     size = 0;
     items = (T[]) new Object[MAX_SIZE];
   }
 
-  public ArrayList() {
+  /**
+   * Construct an array stack with a size 10
+   * 
+   */
+  public ArrayStack() {
     this(10);
   }
 
-  public ArrayList(T[] objArray) {
+  /**
+   * Construct an array stack with another array
+   * 
+   * @param objArray
+   */
+  public ArrayStack(T[] objArray) {
     this(objArray.length);
     for (T obj : objArray) {
       push(obj);
     }
   }
 
+  /**
+   * The actual size of the array
+   * 
+   * @return int
+   */
   public int size() {
     return size;
   }
 
+  /**
+   * Push an item to the top of the stack
+   * 
+   * @param item T, item to push
+   * @return boolean, if the push success
+   */
   public boolean push(T item) {
     // make sure the stack still have empty slot
     if (size < MAX_SIZE) {
@@ -39,22 +64,6 @@ public class ArrayList<T> implements Iterable<T> {
       return true;
     }
     return false;
-  }
-
-  public T remove(int index) {
-    checkIndex(index);
-    T removedElement = items[index];
-    int numMoved = size - index - 1;
-    for (int i = 0; i < numMoved; i++) {
-      items[i + index] = items[i + index + 1];
-    }
-    size--;
-    return removedElement;
-  }
-
-  public T get(int index) {
-    checkIndex(index);
-    return items[index];
   }
 
   @Override
@@ -97,13 +106,11 @@ public class ArrayList<T> implements Iterable<T> {
     return new ArrayListIterator();
   }
 
-  // ------------------------- Helper methods -------------------------
-  private void checkIndex(int index) {
-    if (index < 0 || index >= size) {
-      throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
-    }
-  }
-
+  /**
+   * Check if the array is empty or not
+   * 
+   * @return boolean
+   */
   public boolean isEmpty() {
     return size == 0;
   }
