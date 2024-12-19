@@ -82,7 +82,7 @@ public class App {
   }
 
   private static void test() {
-    Grid grid = new Grid(Vec2.splat(6));
+    Grid grid = new Grid(Vec2.splat(8));
     // grid.useDebug();
 
     final long then = System.nanoTime();

@@ -66,7 +66,7 @@ public class Grid {
     int pathSum = 0;
     // Explore the neighbors cells
     ArrayList<Vec2> neighborCells = findNeighbors(currPos, steps, direction);
-    System.out.println("owp: " + oneWayPoint);
+    // System.out.println("owp: " + oneWayPoint);
     for (Vec2 neighborCell : neighborCells) {
       currPos.selfAdd(neighborCell);
       // Recursively traverse the gridmap
@@ -152,16 +152,47 @@ public class Grid {
             directionToCheck.push(neighborDir);
           else if (neighborDir.equals(dir) && oneWayPoint == null)
             if (isCellValid(currPos.add(dir.rotateLeft())) && isCellValid(currPos.add(dir.rotateRight()))) {
-              System.out.println("Reached 1way");
+              if (!isCellValid(currPos.add(dir.rotateLeft().mul(2)))
+                  || !isCellValid(currPos.add(dir.rotateRight().mul(2))))
+                continue;
+              // System.out.println("Reached 1way");
+              // input.nextLine();
               int[] gridClone = gridData.clone();
               gridClone[to1d(neighborCell)] = 1;
               oneWayPoint = new Vec2(currPos);
               if (bucketFill(gridClone, currPos.add(dir.rotateLeft()))) {
-                return new ArrayList<>(new Vec2[] { dir.rotateLeft() });
-              } else {
+                // System.out.println("Left way");
                 return new ArrayList<>(new Vec2[] { dir.rotateRight() });
+              } else {
+                // System.out.println("Right way");
+                return new ArrayList<>(new Vec2[] { dir.rotateLeft() });
               }
             }
+
+          // if (neighborDir.equals(dir) && oneWayPoint == null) {
+          //
+          // // continue;
+          // if (!isCellValid(currPos.add(dir)) ||
+          // !isCellValid(currPos.add(dir.rotateRight())))
+          // continue;
+          // if (!isCellValid(currPos.add(dir.rotateLeft().mul(2)))
+          // || !isCellValid(currPos.add(dir.rotateRight().mul(2))))
+          // continue;
+          // // System.out.println("Reached 1way");
+          // // input.nextLine();
+          // int[] gridClone = gridData.clone();
+          // gridClone[to1d(neighborCell)] = 1;
+          // oneWayPoint = new Vec2(currPos);
+          // if (bucketFill(gridClone, currPos.add(dir.rotateLeft()))) {
+          // // System.out.println("Left way");
+          // return new ArrayList<>(new Vec2[] { dir.rotateRight() });
+          // } else {
+          // // System.out.println("Right way");
+          // return new ArrayList<>(new Vec2[] { dir.rotateLeft() });
+          // }
+          //
+          // }
+
         }
 
         return directionToCheck;
