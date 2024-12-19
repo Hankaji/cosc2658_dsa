@@ -6,10 +6,12 @@ build
 
 # Ignore Gradle build output directory
 .settings
+app/settings
 
 # Generated files
 **/bin
 
 # Ignore benchmark results
-app/src/main/java/cosc2658/benchmark/benchmark_results.csv
+app/src/main/java/cosc2658/benchmark/*.csv
 
+noice.log
