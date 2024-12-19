@@ -4,6 +4,7 @@ import cosc2658.adt.ArrayList;
 import cosc2658.adt.Optional;
 import cosc2658.adt.Vec2;
 import java.util.Random;
+import java.lang.Math;
 
 public class Grid {
   private Vec2 size;
@@ -221,10 +222,9 @@ public class Grid {
     System.out.println();
   }
 
-  public static String generateRandomInstruction(int gridSize) {
+  public static String generateRandomInstruction(int totalLength) {
     Random random = new Random();
-    int totalLength = gridSize * gridSize; // Total number of cells in the grid
-    int fixedDirectionsCount = gridSize;   // Number of fixed directions
+    int fixedDirectionsCount = (int)Math.sqrt(totalLength);   // Number of fixed directions
     String[] directions = {"U", "D", "L", "R"}; // Possible direction characters
 
     // Build the instruction with fixed directions
