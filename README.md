@@ -1,6 +1,16 @@
 # COSC2658 Data Structures and Algorithms Assignment 2: Group Project
 
 ---
+## Running the program
+```java
+./gradlew run
+
+```
+or
+```java
+./gradlew.bat run
+
+```
 
 ## Benchmarking:
 
@@ -9,10 +19,14 @@
 To run the benchmark run as normal with additional -Dmode=benchmark option:
 
 ```java
-gradle run -Dmode=benchmark
+./gradlew run -Dmode=benchmark
 
 ```
+or
+```java
+./gradlew.bat run -Dmode=benchmark
 
+```
 ### RANDOM INSTRUCTION BENCHMARKING:
 
 ---
